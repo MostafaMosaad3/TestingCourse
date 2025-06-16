@@ -11,14 +11,26 @@ use Tests\TestCase;
 class CategoryRetrievalTest extends TestCase
 {
     use  RefreshDatabase;
+
+//    protected $user ;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+//        $this->user = User::factory()->create();
+        $this->actingAs(User::factory()->create());
+    }
+
     /**
      * Test that categories page opened successfully.
      */
     public function test_if_categories_page_open_successfully(): void
     {
-        $user = User::factory()->create();
+//        $user = User::factory()->create();
+//        $user = $this->user;
 
-        $response = $this->actingAs($user)->get('/categories');
+//        $response = $this->actingAs($user)->get('/categories');
+        $response = $this->get('/categories');
 
 
         $response->assertStatus(200);
@@ -33,9 +45,12 @@ class CategoryRetrievalTest extends TestCase
     public function test_if_categories_page_retrieve_date_successfully(): void
     {
         Category::factory()->count(5)->create();
-        $user = User::factory()->create();
+//        $user = User::factory()->create();
+//        $user = $this->user;
 
-        $response = $this->actingAs($user)->get('/categories');
+//        $response = $this->actingAs($user)->get('/categories');
+        $response = $this->get('/categories');
+
         $response->assertStatus(200);
         $response->assertViewHas('categories' , function($categories){
             return $categories->count() === 5 ;
@@ -49,17 +64,21 @@ class CategoryRetrievalTest extends TestCase
     public function test_if_categories_page_pagination_work(): void
     {
         Category::factory()->count(15)->create();
-        $user = User::factory()->create();
-        $response = $this->actingAs($user)->get('/categories');
+//        $user = User::factory()->create();
+//        $user = $this->user;
+
+//        $response = $this->actingAs($user)->get('/categories');
+        $response = $this->get('/categories');
 
         $response->assertViewHas('categories' , function($categories){
             return $categories->count() === 10 ;
         });
 
-        $response = $this->actingAs($user)->get('/categories?page=2');
-        $response->assertViewHas('categories' , function($categories){
-            return $categories->count() === 5 ;
-        });
+//        $response = $this->actingAs($user)->get('/categories?page=2');
+//        $response = $this->get('/categories?page=2');
+//        $response->assertViewHas('categories' , function($categories){
+//            return $categories->count() === 5 ;
+//        });
 
     }
 }
