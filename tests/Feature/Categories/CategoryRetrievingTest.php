@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
-class CategoryRetrievalTest extends TestCase
+class CategoryRetrievingTest extends TestCase
 {
     use  RefreshDatabase;
 
@@ -63,7 +63,7 @@ class CategoryRetrievalTest extends TestCase
 
     public function test_if_categories_page_pagination_work(): void
     {
-        Category::factory()->count(15)->create();
+        Category::factory()->count(10)->create();
 //        $user = User::factory()->create();
 //        $user = $this->user;
 
@@ -74,11 +74,29 @@ class CategoryRetrievalTest extends TestCase
             return $categories->count() === 10 ;
         });
 
-//        $response = $this->actingAs($user)->get('/categories?page=2');
-//        $response = $this->get('/categories?page=2');
-//        $response->assertViewHas('categories' , function($categories){
-//            return $categories->count() === 5 ;
-//        });
 
+//        $response = $this->actingAs($user)->get('/categories?page=2');
+        $response = $this->get('/categories?page=2');
+        $response->assertViewHas('categories' , function($categories){
+            return $categories->count() === 5 ;
+        });
+
+    }
+
+
+    /**
+     * test if categories show page contains the right content
+     */
+
+    public function test_if_categories_show_page_contains_the_right_content(): void
+    {
+        $category = Category::factory()->create();
+
+        $response = $this->get(route('categories.show' , $category));
+
+        $response->assertStatus(200);
+        $response->assertViewIs('categories.show');
+        $response->assertViewHas('category' , $category) ;
+        $response->assertSeeText($category->name);
     }
 }
